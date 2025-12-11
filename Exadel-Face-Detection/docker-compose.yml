@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:6
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
+  nodeapp:
+    build: .
+    command: npm start
+    volumes:
+      - .:/usr/src/app
+      - ./uploads:/usr/src/app/uploads
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/compreface-demo
+      - COMPRE_FACE_API_KEY=${COMPRE_FACE_API_KEY}
+      - COMPRE_FACE_BASE_URL=${COMPRE_FACE_BASE_URL}
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-data:
